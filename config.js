@@ -8,7 +8,7 @@ dotenv.config({
 module.exports = {
   PORT: process.env.PORT,
   NODE_ENV: process.env.NODE_ENV,
-  MONGO_CONNECTION_STRING: process.env.MONGO_CONNECTION_STRING,
+  MONGO_CONNECTION_URL: process.env.MONGO_CONNECTION_URL,
   AUTH_MODE: process.env.AUTH_MODE === 'true',
   MAX_SYMBOLS_PER_OBJECT: 10000,
   MAX_OPTIONAL_PROPERTIES: 100,

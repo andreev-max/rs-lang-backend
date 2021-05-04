@@ -1,5 +1,4 @@
 const { Schema, model, Types } = require('mongoose');
-const { addMethods } = require('../utils/toResponse');
 
 const StatisticSchema = new Schema(
   {
@@ -16,7 +15,5 @@ const StatisticSchema = new Schema(
   },
   { collection: 'statistic' }
 );
-
-addMethods(StatisticSchema);
 
 module.exports = model('Statistic', StatisticSchema);

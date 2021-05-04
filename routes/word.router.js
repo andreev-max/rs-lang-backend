@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Word = require('../src/resources/words/word.model');
+const Word = require('../models/word.model');
 
 router.route('/').get(async (req, res) => {
 	try {

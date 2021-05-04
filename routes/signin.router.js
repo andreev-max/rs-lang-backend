@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
-const tokenService = require('../src/resources/token/token.service');
+const { getTokens } = require('../utils/refreshToken');
 
 router.route('/').post(
   [
@@ -38,7 +38,7 @@ router.route('/').post(
         return res.status(400).json({ message: 'Неправильно введён пароль' });
       }
 
-      const tokens = await tokenService.getTokens(user._id);
+      const tokens = await getTokens(user._id);
 
       // console.log(user.avatarURL);
       res.status(200).json({

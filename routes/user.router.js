@@ -2,7 +2,6 @@ const router = require('express').Router();
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
-// const MONGO_ENTITY_EXISTS_ERROR_CODE = 11000;
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
