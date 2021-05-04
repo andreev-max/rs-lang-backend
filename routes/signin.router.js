@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
-const User = require('../users/user.model');
-const tokenService = require('../token/token.service');
+const User = require('../models/user.model');
+const tokenService = require('../src/resources/token/token.service');
 
 router.route('/').post(
   [

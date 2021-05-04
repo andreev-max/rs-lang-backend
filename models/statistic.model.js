@@ -1,5 +1,5 @@
 const { Schema, model, Types } = require('mongoose');
-const { addMethods } = require('../../utils/toResponse');
+const { addMethods } = require('../utils/toResponse');
 
 const StatisticSchema = new Schema(
   {

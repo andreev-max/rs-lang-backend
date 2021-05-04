@@ -1,7 +1,7 @@
 const router = require('express').Router({ mergeParams: true });
-const UserWord = require('./userWord.model');
-const Word = require('../words/word.model');
-const { getMessage } = require('../../utils/wordsCount');
+const UserWord = require('../models/userWord.model');
+const Word = require('../src/resources/words/word.model');
+const { getMessage } = require('../utils/wordsCount');
 
 router.get('/', async (req, res) => {
   try {

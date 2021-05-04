@@ -2,8 +2,7 @@ const jwt = require('jsonwebtoken');
 const {
   JWT_SECRET_KEY,
   JWT_REFRESH_SECRET_KEY
-} = require('../../../config');
-// const { AUTHORIZATION_ERROR } = require('../../errors/appErrors');
+} = require('./config');
 
 const ALLOWED_PATHS = ['/signin', '/signup'];
 const DOC_PATH_REGEX = /^\/doc\/?$/;

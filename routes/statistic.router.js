@@ -1,12 +1,12 @@
 const router = require('express').Router();
-const Statistics = require('./statistic.model');
+const Statistics = require('../models/statistic.model');
 const {
   getLearnedWordsTotal,
   getLearnedWordsToday,
   getLearnedWordsPerDate,
   getCorrectPercentToday,
   getStatsPerGame
-} = require('../../utils/statsFunctions');
+} = require('../utils/statsFunctions');
 
 router.get('/', async (req, res) => {
   try {
