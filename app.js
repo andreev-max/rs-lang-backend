@@ -2,47 +2,43 @@ const express = require('express');
 const fileupload = require('express-fileupload');
 const path = require('path');
 const cors = require('cors');
-
-const wordRouter = require('./routes/word.router');
-const signinRouter = require('./routes/signin.router');
-const userRouter = require('./routes/user.router');
-const userTokenRouter = require('./routes/token.router');
-const userWordsRouter = require('./routes/userWord.router');
-const statisticRouter = require('./routes/statistic.router');
-const checkAuthentication = require('./checkAuthentication');
+const mongoose = require('mongoose');
+const { PORT, MONGO_CONNECTION_URL } = require('./config');
+const auth = require('./routes/auth.router');
+const upload = require('./routes/upload.router');
+const statistics = require('./routes/statistics.router');
+const settings = require('./routes/settings.routes');
 
 const app = express();
 app.use(express.json({ extended: true }));
 app.use(
-  fileupload({
-    useTempFiles: true
-  })
+	fileupload({
+		useTempFiles: true
+	})
 );
-
 app.use(cors());
-
 app.use('/files', express.static(path.join(__dirname, './files')));
 
-app.use(checkAuthentication);
+app.use(auth);
+app.use(upload);
+app.use(statistics);
+app.use(settings);
 
-app.use('/', (req, res, next) => {
-  if (req.originalUrl === '/') {
-    res.send('Service is running!');
-    return;
-  }
-  next();
-});
+async function start() {
+	try {
+		await mongoose.connect(MONGO_CONNECTION_URL, {
+			useCreateIndex: true,
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+			useFindAndModify: false
+		});
+		app.listen(PORT, () => {
+			console.log(`App is running on http://localhost:${PORT}`);
+		});
+	} catch (e) {
+		console.log('Server error', e.message);
+		process.exit(1);
+	}
+}
 
-app.use('/words', wordRouter);
-
-app.use('/signin', signinRouter);
-
-app.use('/users', userRouter);
-
-userRouter.use('/:id/tokens', userTokenRouter);
-
-userRouter.use('/:id/words', userWordsRouter);
-
-userRouter.use('/:id/statistics', statisticRouter);
-
-module.exports = app;
+start();

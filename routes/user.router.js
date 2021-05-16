@@ -55,7 +55,7 @@ router.get('/:id', async (req, res) => {
   if (!user) {
     res.status(400).json({ message: 'Пользователь с таким ID не найден' });
   }
-  res.status(200).send(user.toResponse());
+  res.status(200).json(user);
 });
 
 router.put('/:id', async (req, res) => {

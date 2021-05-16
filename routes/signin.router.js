@@ -37,15 +37,15 @@ router.route('/').post(
       if (!isMatch) {
         return res.status(400).json({ message: 'Неправильно введён пароль' });
       }
-
+      
       const tokens = await getTokens(user._id);
 
-      // console.log(user.avatarURL);
       res.status(200).json({
         ...tokens,
         userId: user.id,
         name: user.name,
         avatarURL: user.avatarURL,
+        settings: user.settings,
         message: 'Вы успешно вошли в ваш аккаунт'
       });
     } catch (e) {

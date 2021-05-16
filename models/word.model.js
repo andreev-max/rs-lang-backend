@@ -1,22 +1,22 @@
 const { Schema, model } = require('mongoose');
 
 const WordsSchema = new Schema(
-  {
-    group: { type: Number, required: true },
-    page: { type: Number, required: true },
-    word: { type: String, required: true, max: 100 },
-    image: { type: String, required: false, max: 150 },
-    audio: { type: String, required: false, max: 150 },
-    audioMeaning: { type: String, required: false, max: 150 },
-    audioExample: { type: String, required: false, max: 150 },
-    textMeaning: { type: String, required: false, max: 300 },
-    textExample: { type: String, required: false, max: 300 },
-    transcription: { type: String, required: false, max: 100 },
-    wordTranslate: String,
-    textMeaningTranslate: String,
-    textExampleTranslate: String
-  },
-  { collection: 'words' }
+	{
+		group: { type: Number },
+		page: { type: Number },
+		word: { type: String },
+		wordTranslate: { type: String },
+		transcription: { type: String },
+		image: { type: String },
+		audio: { type: String },
+		audioMeaning: { type: String },
+		audioExample: { type: String },
+		textMeaning: { type: String },
+		textMeaningTranslate: { type: String },
+		textExample: { type: String },
+		textExampleTranslate: { type: String },
+	},
+	{ collection: 'words' }
 );
 
 module.exports = model('Words', WordsSchema);
