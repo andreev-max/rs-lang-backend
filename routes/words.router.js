@@ -1,18 +1,16 @@
 const router = require('express').Router();
-const Word = require('../models/word.model');
+const Words = require('../models/word.model');
 
-router.route('/').get(async (req, res) => {
+router.get('/words', async (req, res) => {
 	try {
 		const page = req.query.page || 0;
 		const group = req.query.group || 0;
-
 		if (isNaN(page) || isNaN(group)) {
 			return res
 				.status(400)
 				.json({ message: 'Неправильные параметры: группа и страница должны быть валидными числами' });
 		}
-
-		const words = await Word.find({ group, page });
+		const words = await Words.find({ group, page });
 		res.status(200).json(words);
 	} catch (e) {
 		console.log('get words', e);
@@ -20,10 +18,10 @@ router.route('/').get(async (req, res) => {
 	}
 });
 
-router.route('/:id').get(async (req, res) => {
+router.get('/words/:id', async (req, res) => {
 	try {
 		console.log('id В роутере', req.params.id);
-		const word = await Word.findOne({ _id: id });
+		const word = await Words.findOne({ _id: id });
 		res.status(200).json(word);
 	} catch (e) {
 		console.log('get word by id', e);

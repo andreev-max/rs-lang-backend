@@ -15,7 +15,7 @@ router.post(
 		})
 	],
 	async (req, res) => {
-    console.log(req.body)
+		console.log(req.body);
 		try {
 			const errors = validationResult(req);
 			console.log(errors);
@@ -30,7 +30,7 @@ router.post(
 			const { email, password, name } = req.body;
 
 			const candidate = await User.findOne({ email });
-      console.log(candidate);
+			console.log(candidate);
 			if (candidate) {
 				return res.status(400).json({
 					message: 'Извините, такой email занят :('
@@ -88,6 +88,8 @@ router.post(
 				name: user.name,
 				avatarURL: user.avatarURL,
 				settings: user.settings,
+				userWords: user.words,
+				statistics: user.statistics,
 				message: 'Вы успешно вошли в ваш аккаунт'
 			});
 		} catch (e) {

@@ -11,19 +11,11 @@ cloudinary.config({
 });
 
 router.post('/upload', auth, async function(req, res) {
-	// console.log(req)
 	const ID = req.user.userId;
-	console.log('user', ID);
-	// console.log(req.body);
-	// console.log(req.body.files);
-	// console.log('formData', req.formData);
-	// console.log('file', req.file);
-	console.log(req.files);
 	try {
 		const result = await cloudinary.uploader.upload(req.files.avatar.tempFilePath, { upload_preset: 'avatarPreset' });
 		const user = await User.findByIdAndUpdate(ID, { avatarURL: result.url, new: true});
 		const avatarURL = result.url || user.avatarURL;
-
 		res.status(200).json({ avatarURL, message: 'Загрузили новое фото :)' });
 	} catch (e) {
 		console.log(e);
