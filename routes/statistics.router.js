@@ -16,14 +16,16 @@ router.get('/statistics', authMiddleware, async (req, res) => {
 		const parsedStats = getUserStats(user.statistics);
 		res.status(200).json({ parsedStats, message: 'Статистика обновлена' });
 	} catch (e) {
-		console.log(e);
+		console.log('get stats', e);
 		res.status(400).send(e);
 	}
 });
 
 router.post('/statistics', authMiddleware, async (req, res) => {
 	try {
+		console.log('put stats');
 		const { correctArr, failArr, seriesArr, gameName } = req.body;
+		console.log(req.body);
 		const transformed = transformStats({ correctArr, failArr, seriesArr, gameName });
 		const user = await User.findById(req.user.userId);
 		const userWords = user.words;
@@ -45,7 +47,7 @@ router.post('/statistics', authMiddleware, async (req, res) => {
 			}
 		});
 
-		await User.findByIdAndUpdate(
+		const newUser = await User.findByIdAndUpdate(
 			req.user.userId,
 			{
 				$push: { statistics: transformed },
@@ -53,11 +55,11 @@ router.post('/statistics', authMiddleware, async (req, res) => {
 			},
 			{ new: true }
 		);
-
+		const parsedStats = getUserStats(user.statistics);
 		const message = getMessage(newWordsCount);
-		res.status(200).json({ message });
+		res.status(200).json({ statistics: parsedStats, userWords: newUser.words, message });
 	} catch (e) {
-		console.log(e);
+		console.log('post stats', e);
 		res.status(400).send(e);
 	}
 });

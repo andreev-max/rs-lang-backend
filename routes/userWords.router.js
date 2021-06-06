@@ -15,165 +15,81 @@ router.get('/userWords', authMiddleware, async (req, res) => {
 	}
 });
 
-router.get('/dictionary', async (req, res) => {
+router.post('/updateWord', authMiddleware, async (req, res) => {
 	try {
-		const userId = req.userId;
-		const userWords = await User.find({ userId });
-		const dictionaryWords = await Promise.all(
-			userWords.map(async (item) => {
-				const ID = item.wordId;
-				const correct = item.correct || 0;
-				const fail = item.fail || 0;
-				const deleted = item.deleted || false;
-				const difficult = item.difficult || false;
-				const word = await Word.findOne({ _id: ID });
-				return {
-					...word._doc,
-					fail,
-					correct,
-					deleted,
-					difficult,
-					wordId: ID,
-					id: ID
-				};
-			})
-		);
-		// const idArr = userWords.map(item => {
-		//   return item.wordId;
-		// });
-		// const testArr = await Word.find({ _id: { $in: [...idArr] } });
-		res.status(200).json({
-			dictionaryWords,
-			message: 'Ваши слова доставлены'
-		});
-	} catch (e) {
-		console.log('get user words', e);
-		res.status(400).send(e);
-	}
-});
-
-router.get('/:wordId', async (req, res) => {
-	try {
-		const userId = req.userId;
-		const wordId = req.params.wordId;
-		const userWord = await User.findOne({ wordId, userId });
-		res.status(200).json({ userWord, message: 'Ваше слово доставлено' });
-	} catch (e) {
-		console.log('get wordId', e);
-		res.status(400).send(e);
-	}
-});
-
-router.post('/:wordId', async (req, res) => {
-	try {
-		const userId = req.userId;
-		const wordId = req.params.wordId;
-		const wordBody = req.body;
-		const wordEntity = await User.findOne({ wordId, userId });
-		let allUserWords = [];
-		if (wordEntity) {
-			const updatedWord = await User.findOneAndUpdate({ wordId, userId }, { $set: wordBody }, { new: true });
-			if (!updatedWord) {
-				res.status(400).json({ message: 'слово не смогло обновиться' });
-			}
-			allUserWords = await UserWord.find({ userId });
-			res.status(200).json({ allUserWords, updatedWord, message: 'нашёл' });
+		console.log(req.body);
+		const newValue = req.body.value === 'false' ? true : false;
+		const user = await User.findById(req.user.userId);
+		const userWords = user.words;
+		if (req.body.name === 'deleted' && newValue === false) {
+			console.log('ПОПАЛ В БЛОК IF');
+			console.log(typeof userWords);
+			console.log(userWords.length);
+			const newUserWords = await userWords.filter((item) => `${item._id}` != `${req.body.wordId}`);
+			console.log(newUserWords.length);
+			const newUser = await User.findByIdAndUpdate(
+				req.user.userId,
+				{
+					$set: { words: newUserWords }
+				},
+				{ new: true }
+			);
+			res.status(200).json({ userWords: newUser.words, message: 'Это слово удалено из списка ваших слов' });
 		} else {
-			const newUserWord = await User.create({
-				...wordBody,
-				userId,
-				wordId
-			});
-			allUserWords = await User.find({ userId });
-			res.status(200).json({ allUserWords, newUserWord, message: 'создал' });
-		}
-	} catch (e) {
-		console.log('user word id', e);
-		res.status(400).send(e);
-	}
-});
-
-router.delete('/:wordId', async (req, res) => {
-	const wordId = req.params.wordId;
-	const userId = req.userId;
-	await UserWord.deleteOne({ wordId, userId });
-	res.status(200).json({ message: 'Слово восстановлено' });
-});
-
-router.put('/answers', async (req, res) => {
-	try {
-		const userId = req.userId;
-		const allAnswersArr = req.body.allAnswers;
-		const correctAnswersArr = req.body.correctArr;
-		const failAnswersArr = req.body.failArr;
-		const result = await Promise.all(
-			allAnswersArr.map(async (item) => {
-				const wordId = item.id;
-				const wordBody = {
-					difficult: item.difficult,
-					group: item.group,
-					page: item.page,
-					deleted: item.deleted
-				};
-				const wordEntity = await User.findOne({ wordId, userId });
-				if (wordEntity) {
-					await UserWord.findOneAndUpdate({ wordId, userId }, { $set: wordBody }, { new: true });
-					return null;
+			userWords.forEach((item) => {
+				if (`${item._id}` == `${req.body.wordId}`) {
+					item[req.body.name] = newValue;
 				}
-				const newUserWord = await User.create({
-					...wordBody,
-					userId,
-					wordId
-				});
-				return newUserWord;
-			})
-		);
-		const correctResult = await Promise.all(
-			correctAnswersArr.map(async (item) => {
-				const wordId = item.id;
-				const updatedWord = await User.findOneAndUpdate({ wordId, userId }, { $inc: { correct: 1 } }, { new: true });
-				return updatedWord;
-			})
-		);
-		const failResult = await Promise.all(
-			failAnswersArr.map(async (item) => {
-				const wordId = item.id;
-				const updatedWord = await User.findOneAndUpdate({ wordId, userId }, { $inc: { fail: 1 } }, { new: true });
-				return updatedWord;
-			})
-		);
-		const newWordsArr = result.filter((word) => word !== null);
-		const newWordsCount = newWordsArr.length;
-		const message = getMessage(newWordsCount);
-		res.status(200).json({
-			correctResult,
-			failResult,
-			newWordsArr,
-			newWordsCount,
-			message
-		});
+			});
+			const newUser = await User.findByIdAndUpdate(
+				req.user.userId,
+				{
+					$set: { words: userWords }
+				},
+				{ new: true }
+			);
+			res.status(200).json({ userWords: newUser.words, message: 'Изменили слово' });
+		}
 	} catch (e) {
-		console.log('update userWord', e);
+		console.log('update word', e);
 		res.status(400).send(e);
 	}
 });
 
-router.put('/:wordId', async (req, res) => {
-	try {
-		const userId = req.userId;
-		const wordId = req.params.wordId;
-		const value = req.body.value;
-		let updatedWord = {};
-		if (value) {
-			updatedWord = await User.findOneAndUpdate({ wordId, userId }, { $inc: { correct: 1 } }, { new: true });
-		} else {
-			updatedWord = await User.findOneAndUpdate({ wordId, userId }, { $inc: { fail: 1 } }, { new: true });
-		}
-		res.status(200).json({ updatedWord, message: 'Слово обновилось' });
-	} catch (e) {
-		console.log('update userWord', e);
-		res.status(400).send(e);
-	}
-});
+// router.post('/:wordId', async (req, res) => {
+// 	try {
+// 		const userId = req.userId;
+// 		const wordId = req.params.wordId;
+// 		const wordBody = req.body;
+// 		const wordEntity = await User.findOne({ wordId, userId });
+// 		let allUserWords = [];
+// 		if (wordEntity) {
+// 			const updatedWord = await User.findOneAndUpdate({ wordId, userId }, { $set: wordBody }, { new: true });
+// 			if (!updatedWord) {
+// 				res.status(400).json({ message: 'слово не смогло обновиться' });
+// 			}
+// 			allUserWords = await UserWord.findById(userId);
+// 			res.status(200).json({ allUserWords, updatedWord, message: 'нашёл' });
+// 		} else {
+// 			const newUserWord = await User.create({
+// 				...wordBody,
+// 				userId,
+// 				wordId
+// 			});
+// 			allUserWords = await User.findById(userId);
+// 			res.status(200).json({ allUserWords, newUserWord, message: 'создал' });
+// 		}
+// 	} catch (e) {
+// 		console.log('user word id', e);
+// 		res.status(400).send(e);
+// 	}
+// });
+
+// router.delete('/:wordId', async (req, res) => {
+// 	const wordId = req.params.wordId;
+// 	const userId = req.userId;
+// 	await UserWord.deleteOne({ wordId, userId });
+// 	res.status(200).json({ message: 'Слово восстановлено' });
+// });
 
 module.exports = router;

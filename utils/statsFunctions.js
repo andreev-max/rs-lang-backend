@@ -99,7 +99,12 @@ function getLearnedWordsTotal(data) {
 function transformStats({ gameName, correctArr, failArr, seriesArr }) {
 	const totalWords = correctArr.length + failArr.length;
 	const correctPercent = Math.round(100 * correctArr.length / (correctArr.length + failArr.length));
-	const longestSeries = Math.max.apply(null, seriesArr);
+	let longestSeries;
+	if (seriesArr.length) {
+		longestSeries = Math.max.apply(null, seriesArr);
+	} else {
+		longestSeries = 0;
+	}
 	const date = getTodayDate();
 	return {
 		gameName,
@@ -111,26 +116,26 @@ function transformStats({ gameName, correctArr, failArr, seriesArr }) {
 }
 
 function getUserStats(allGames) {
-  const todayDate = getTodayDate();
-  const savannaGameStats = getStatsPerGame(allGames, 'savanna', 'Саванна');
-  const matchGameStats = getStatsPerGame(allGames, 'match', 'Отгадай картинку');
-  const sprintGameStats = getStatsPerGame(allGames, 'sprint', 'Спринт');
-  const audioGameStats = getStatsPerGame(allGames, 'audio', 'Аудиовызов');
-  const percentToday = getCorrectPercentToday(allGames, `${todayDate}`);
-  const learnedWordsPerDate = getLearnedWordsPerDate(allGames);
-  const learnedWordsToday = getLearnedWordsToday(allGames, `${todayDate}`);
-  const learnedWordsTotal = getLearnedWordsTotal(learnedWordsPerDate);
-  return {
-    todayDate,
-			learnedWordsTotal,
-			learnedWordsToday,
-			learnedWordsPerDate,
-			percentToday,
-			games: [ savannaGameStats, matchGameStats, sprintGameStats, audioGameStats ]
-  }
+	const todayDate = getTodayDate();
+	const savannaGameStats = getStatsPerGame(allGames, 'savanna', 'Саванна');
+	const matchGameStats = getStatsPerGame(allGames, 'match', 'Сопоставление');
+	const sprintGameStats = getStatsPerGame(allGames, 'sprint', 'Спринт');
+	const audioGameStats = getStatsPerGame(allGames, 'audio', 'Аудиовызов');
+	const percentToday = getCorrectPercentToday(allGames, `${todayDate}`);
+	const learnedWordsPerDate = getLearnedWordsPerDate(allGames);
+	const learnedWordsToday = getLearnedWordsToday(allGames, `${todayDate}`);
+	const learnedWordsTotal = getLearnedWordsTotal(learnedWordsPerDate);
+	return {
+		todayDate,
+		learnedWordsTotal,
+		learnedWordsToday,
+		learnedWordsPerDate,
+		percentToday,
+		games: [ savannaGameStats, matchGameStats, sprintGameStats, audioGameStats ]
+	};
 }
 
 module.exports = {
 	getUserStats,
-	transformStats,
+	transformStats
 };

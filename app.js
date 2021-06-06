@@ -10,6 +10,7 @@ const statistics = require('./routes/statistics.router');
 const settings = require('./routes/settings.routes');
 const words = require('./routes/words.router');
 const userWords = require('./routes/userWords.router');
+const name = require('./routes/name.router');
 
 const app = express();
 app.use(express.json({ extended: true }));
@@ -23,10 +24,11 @@ app.use('/files', express.static(path.join(__dirname, './files')));
 
 app.use(auth);
 app.use(words);
-// app.use(userWords);
+app.use(userWords);
 app.use(upload);
 app.use(statistics);
 app.use(settings);
+app.use(name);
 
 async function start() {
 	try {

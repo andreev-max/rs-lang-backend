@@ -23,7 +23,8 @@ const User = new Schema(
 			difficultWord: { type: Boolean, default: true },
 			deleteWord: { type: Boolean, default: true },
 			translateWord: { type: Boolean, default: true },
-			translateSentences: { type: Boolean, default: true }
+			translateSentences: { type: Boolean, default: true },
+			theme: { type: String, default: 'light' }
 		},
 		statistics: [
 			{

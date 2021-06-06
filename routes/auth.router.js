@@ -4,14 +4,15 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const { JWT_SECRET_KEY } = require('../config');
+const { getUserStats } = require('../utils/statsFunctions');
 
 router.post(
 	'/signup',
 	[
 		check('email', 'Неправильно введён email').isEmail(),
-		check('password', 'Пароль должен содержать от 4 до 10 символов').isLength({
+		check('password', 'Пароль должен содержать от 4 до 12 символов').isLength({
 			min: 4,
-			max: 10
+			max: 12
 		})
 	],
 	async (req, res) => {
@@ -82,14 +83,16 @@ router.post(
 
 			const token = jwt.sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '24h' });
 
+			const parsedStats = getUserStats(user.statistics);
+
 			res.status(200).json({
 				token,
 				userId: user.id,
-				name: user.name,
+				userName: user.name,
 				avatarURL: user.avatarURL,
 				settings: user.settings,
 				userWords: user.words,
-				statistics: user.statistics,
+				statistics: parsedStats,
 				message: 'Вы успешно вошли в ваш аккаунт'
 			});
 		} catch (e) {
