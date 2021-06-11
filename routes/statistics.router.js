@@ -2,30 +2,11 @@ const router = require('express').Router();
 const authMiddleware = require('../auth.middleware');
 const User = require('../models/user.model');
 const { transformStats, getUserStats } = require('../utils/statsFunctions');
-const { getMessage } = require('../utils/wordsCount');
-
-router.get('/statistics', authMiddleware, async (req, res) => {
-	try {
-		const user = await User.findById(req.user.userId);
-		if (!user.statistics.length) {
-			return res.status(200).json({
-				message: 'У вас ещё нет статистики',
-				parsedStats: null
-			});
-		}
-		const parsedStats = getUserStats(user.statistics);
-		res.status(200).json({ parsedStats, message: 'Статистика обновлена' });
-	} catch (e) {
-		console.log('get stats', e);
-		res.status(400).send(e);
-	}
-});
+const { getStatisticsMessage } = require('../utils/getMessage');
 
 router.post('/statistics', authMiddleware, async (req, res) => {
 	try {
-		console.log('put stats');
 		const { correctArr, failArr, seriesArr, gameName } = req.body;
-		console.log(req.body);
 		const transformed = transformStats({ correctArr, failArr, seriesArr, gameName });
 		const user = await User.findById(req.user.userId);
 		const userWords = user.words;
@@ -55,8 +36,8 @@ router.post('/statistics', authMiddleware, async (req, res) => {
 			},
 			{ new: true }
 		);
-		const parsedStats = getUserStats(user.statistics);
-		const message = getMessage(newWordsCount);
+		const parsedStats = getUserStats(newUser.statistics);
+		const message = getStatisticsMessage(newWordsCount);
 		res.status(200).json({ statistics: parsedStats, userWords: newUser.words, message });
 	} catch (e) {
 		console.log('post stats', e);

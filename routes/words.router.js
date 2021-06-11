@@ -18,15 +18,4 @@ router.get('/words', async (req, res) => {
 	}
 });
 
-router.get('/words/:id', async (req, res) => {
-	try {
-		console.log('id В роутере', req.params.id);
-		const word = await Words.findOne({ _id: id });
-		res.status(200).json(word);
-	} catch (e) {
-		console.log('get word by id', e);
-		res.status(400).send(e);
-	}
-});
-
 module.exports = router;

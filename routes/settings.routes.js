@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const authMiddleware = require('../auth.middleware');
 const User = require('../models/user.model');
+const { getSettingsMessage } = require('../utils/getMessage');
 
 router.post('/settings', authMiddleware, async (req, res) => {
 	try {
@@ -16,9 +17,10 @@ router.post('/settings', authMiddleware, async (req, res) => {
 			},
 			{ new: true }
 		);
-		res.status(200).json({ settings: user.settings, message: 'Изменили ваши настройки' });
+		const message = getSettingsMessage(name, value);
+		res.status(200).json({ settings: user.settings, message });
 	} catch (e) {
-		console.log(e);
+		console.log('settings error', e);
 		res.status(400).send(e);
 	}
 });
