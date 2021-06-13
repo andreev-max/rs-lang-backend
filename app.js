@@ -19,7 +19,12 @@ app.use(
 		useTempFiles: true
 	})
 );
-app.use(cors());
+app.use(
+	cors({
+		credentials: true,
+		origin: [ 'http://localhost:3000', 'https://nazdac-rs-lang.netlify.app' ]
+	})
+);
 app.use('/files', express.static(path.join(__dirname, './files')));
 
 app.use(auth);
@@ -29,6 +34,17 @@ app.use(upload);
 app.use(statistics);
 app.use(settings);
 app.use(name);
+
+const sess = {
+	secret: 'nAzdAc',
+	cookie: {}
+};
+
+if (app.get('env') === 'production') {
+	app.set('trust proxy', 1);
+	sess.cookie.secure = true;
+	sess.cookie.sameSite = 'none';
+}
 
 async function start() {
 	try {
