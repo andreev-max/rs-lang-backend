@@ -1,10 +1,11 @@
 const router = require('express').Router();
-const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 const { JWT_SECRET_KEY } = require('../config');
 const { getUserStats } = require('../utils/statsFunctions');
+const mailer = require('./nodemailer');
+const { getMailerMessage } = require('../utils/getMessage');
 
 router.post('/signup', async (req, res) => {
 	try {
@@ -18,7 +19,13 @@ router.post('/signup', async (req, res) => {
 		const hashedPassword = await bcrypt.hash(password, 10);
 		const user = new User({ email, password: hashedPassword, name });
 		await user.save();
-		res.status(200).json({ user, message: 'Вы успешно зарегистрировались. Поздравляем!' });
+		mailer(getMailerMessage(email, password, name));
+		res
+			.status(200)
+			.json({
+				user,
+				message: 'Вы успешно зарегистрировались. Поздравляем! Если вы указали настоящую почту, то проверьте её'
+			});
 	} catch (e) {
 		console.log('signup', e);
 		res.status(400).send(e);
@@ -42,6 +49,7 @@ router.post('/signin', async (req, res) => {
 			token,
 			userId: user.id,
 			userName: user.name,
+			userEmail: user.email,
 			avatarURL: user.avatarURL,
 			settings: user.settings,
 			userWords: user.words,

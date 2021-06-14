@@ -1,3 +1,5 @@
+const { MAILER_USER } = require('../config');
+
 function getSettingsMessage(settingName, value) {
 	console.log(settingName);
 	console.log(value);
@@ -64,8 +66,29 @@ function getUserWordsMessage(name, value, wordName) {
 	return message;
 }
 
+function getMailerMessage(email, password, name) {
+	return {
+		from: `RS Lang <${MAILER_USER}>`,
+		to: email,
+		subject: 'Поздравляем! Вы успешно зарегистрировались в приложении RS Lang',
+		html: `
+		<h2>Мы очень рады, что вы выбрали именно наше приложение для изучения английского языка. Надеемся, что мы вас не разочаруем. Если вдруг вы найдёте какие-нибудь ошибки, то вы всегда можете написать нам по этому адресу ${MAILER_USER} . Или заполнить форму в самом приложении во вкладке "Настройки".</h2>
+		<br />
+		<h4>Мы оставим здесь ваши данные, которые вы указали при регистрации. Так у вас всегда будет возможность подсмотреть их, если вдруг забудете :)</h4>
+		<ul>
+		<li>Ваш Логин: ${email}</li>
+		<li>Ваш Пароль: ${password}</li>
+		<li>Ваш Никнейм: ${name} (можно в любой момент изменить во вкладке "Настройки")</li>
+		</ul>
+		<p> P.S. Это письмо не требует обязательного ответа</p>
+																									 <h5>С уважением, команда RS Lang :)</h5>
+		`
+	};
+}
+
 module.exports = {
 	getSettingsMessage,
 	getStatisticsMessage,
-	getUserWordsMessage
+	getUserWordsMessage,
+	getMailerMessage
 };
