@@ -1,4 +1,4 @@
-const { MAILER_USER } = require('../config');
+const { MAILER_USER, FEEDBACK_USER } = require('../config');
 
 function getSettingsMessage(settingName, value) {
 	console.log(settingName);
@@ -86,9 +86,24 @@ function getMailerMessage(email, password, name) {
 	};
 }
 
+function getFeedbackMessage(email, message, src) {
+	return {
+		from: `FEEDBACK MAILER <${MAILER_USER}>`,
+		to: FEEDBACK_USER,
+		subject: 'FEEDBACK',
+		html: `
+		<h2>Feedback from ${email}</h2>
+		<br />
+		<p>${message}</p>
+		<img src="${src}" alt"screenshot" />
+		`
+	};
+}
+
 module.exports = {
 	getSettingsMessage,
 	getStatisticsMessage,
 	getUserWordsMessage,
-	getMailerMessage
+	getMailerMessage,
+	getFeedbackMessage
 };

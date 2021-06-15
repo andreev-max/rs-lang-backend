@@ -11,6 +11,7 @@ const settings = require('./routes/settings.routes');
 const words = require('./routes/words.router');
 const userWords = require('./routes/userWords.router');
 const name = require('./routes/name.router');
+const feedback = require('./routes/feedback.router');
 
 const app = express();
 app.use(express.json({ extended: true }));
@@ -29,6 +30,7 @@ app.use(upload);
 app.use(statistics);
 app.use(settings);
 app.use(name);
+app.use(feedback);
 
 async function start() {
 	try {
