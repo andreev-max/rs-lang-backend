@@ -17,7 +17,8 @@ router.get('/userWords', authMiddleware, async (req, res) => {
 router.post('/updateWord', authMiddleware, async (req, res) => {
 	try {
 		const { wordId, name, value, wordName } = req.body;
-		const newValue = value === 'false' ? true : false;
+		console.log(req.body);
+		const newValue = value === 'true' ? false : true;
 		const message = getUserWordsMessage(name, newValue, wordName);
 		const user = await User.findById(req.user.userId);
 		const userWords = user.words;
