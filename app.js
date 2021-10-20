@@ -8,7 +8,7 @@ const auth = require('./routes/auth.router');
 const upload = require('./routes/upload.router');
 const statistics = require('./routes/statistics.router');
 const settings = require('./routes/settings.routes');
-const words = require('./routes/words.router');
+const allWords = require('./routes/allWords.router');
 const userWords = require('./routes/userWords.router');
 const name = require('./routes/name.router');
 const feedback = require('./routes/feedback.router');
@@ -24,7 +24,7 @@ app.use(cors());
 app.use('/files', express.static(path.join(__dirname, './files')));
 
 app.use(auth);
-app.use(words);
+app.use(allWords);
 app.use(userWords);
 app.use(upload);
 app.use(statistics);
@@ -44,7 +44,7 @@ async function start() {
 			console.log(`App is running on http://localhost:${PORT}`);
 		});
 	} catch (e) {
-		console.log('Server error', e.message);
+		console.log('Server error', e);
 		process.exit(1);
 	}
 }
