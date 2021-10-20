@@ -24,7 +24,7 @@ const User = new Schema(
 			deleteWord: { type: Boolean, default: true },
 			translateWord: { type: Boolean, default: true },
 			translateSentences: { type: Boolean, default: true },
-			theme: { type: String, default: 'light' }
+			theme: { type: String, default: 'dark' }
 		},
 		statistics: [
 			{
